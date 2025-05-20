@@ -1,30 +1,20 @@
-import { Controller, Post, UseGuards,  Req, Res, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, UseGuards,  Req, Res, UnauthorizedException, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthGuard } from '@nestjs/passport';
-import { LocalAuthGuard } from './guards/local-auth.guard';
-import { Request, Response } from 'express';
+import { UserExistGuard } from './guards/user-exists.guard';
+import { UserNotExistGuard } from './guards/user-not-exist.guard';
+import { OwnerRoleGuard } from './guards/owner.guard';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-  @Post('login')
-  @UseGuards(LocalAuthGuard)
-  async login(@Req() req, @Res({passthrough: true}) res: Response) {
-    const user = await this.authService.login(req.user);
-    res.cookie('shift', user.refreshToken, { secure: false, httpOnly: true });
-    return res.send(user);
-
+  @UseGuards(UserExistGuard)
+  @Post('email/register')
+  async emailRegister(@Body() body:UserEmailRegisterDto){
+    return this.authService.emailRegister(body)
   }
-  @Post('login/refresh')
-  async getNewTokens(@Req() req: Request, @Res({passthrough: true}) res: Response){
-      const refreshTokenFromCookies = req.cookies['refreshToken']
-      if (!refreshTokenFromCookies){
-          res.clearCookie('refreshToken');
-          throw new UnauthorizedException("Refresh not passed")
-      }
-      const tokens = await this.authService.getNewTokens(refreshTokenFromCookies);
-      // res.cookie('refreshToken', tokens.refreshToken, { secure: false, httpOnly: true });
-      return res.send({token: tokens.token});
+  @UseGuards(UserNotExistGuard)
+  @Post('email/login')
+    async emailLogin(@Body() body: UserEmailLoginDto){
+    return this.authService.login(body)
   }
-
 
 }

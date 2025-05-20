@@ -1,38 +1,44 @@
 import {Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserService } from 'src/user/user.service';
-import * as bcrypt from 'bcrypt';
-import { User } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
-import { Iuser } from 'src/types/types';
 import { PrismaService } from 'src/prisma.service';
+import {hash, compare} from 'bcrypt'
 @Injectable()
 export class AuthService {
     constructor(
-        private userService: UserService, 
         private prisma: PrismaService,
-        private readonly jwtService: JwtService){}
-    async validateUser(email:string, password:string){
-        const user: User = await this.userService.findOne(email)
-        const passwordCkeck = await bcrypt.compare(password, user.password)
-        if(user && passwordCkeck===true){
-            return user
+        private readonly jwtService: JwtService,
+        ){}
+        private readonly SALT_ROUNDS = 12
+    async emailRegister(data:UserEmailRegisterDto){
+      const hashed = await hash(data.password, this.SALT_ROUNDS)
+      const user = await this.prisma.user.create({
+        data:{
+          email:data.email,
+          name: data.name,
+          password: hashed,
         }
-        throw new UnauthorizedException('Incorrect password or email')
-    }
-    async login(user: Iuser) {
-        const {id, email} = user
-        const userData = await this.prisma.user.findUnique({where: {id}})
-        return {
-          user: userData,
-          token: this.jwtService.sign({id: user.id, email: user.email}),
-          refreshToken: this.jwtService.sign({id: user.id, email: user.email}, {expiresIn: '1d'})
-        };
+      })
+      const owner = await this.prisma.owner.create({
+        data:{
+          userId: user.id
+        }
+      })
+      return{
+          user:user,
+          token: this.jwtService.sign({id: user.id, email: user.email}, {expiresIn: '3h'}),
+          refreshToken: this.jwtService.sign({id: user.id, email: user.email}, {expiresIn: '2d'})
       }
-      async getNewTokens(refreshToken: string) {
-        const userData = await this.jwtService.verify(refreshToken);
-        return {
-          token: this.jwtService.sign({id: userData.id, email: userData.email}),
-          // refreshToken: this.jwtService.sign({id: userData.id, email: userData.email}, {expiresIn: '1d'})
-        };
+    }
+    async login(data:UserEmailLoginDto){
+      const user = await this.prisma.user.findUnique({where: {email:data.email}})
+      const passwordCompare = await compare(data.password, user.password)
+      if(!passwordCompare){
+        throw new UnauthorizedException('Неверный логин или пароль')
+      }
+      return {
+        user: user,
+        token: this.jwtService.sign({id: user.id, email: user.email}, {expiresIn: '3h'}),
+        refreshToken: this.jwtService.sign({id: user.id, email: user.email}, {expiresIn: '1d'})
+      };
     }
 }

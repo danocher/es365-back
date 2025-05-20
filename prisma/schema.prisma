@@ -9,75 +9,131 @@ datasource db {
 
 model User {
   id       String    @id @default(uuid())
-  name     String
-  mail     String    @unique
+  name     String 
+  email     String?    @unique
   password String
+  phonenum String?
+  director Owner?
+  manager  Manager?
+}
+
+model Owner{
+  id String @id @default(uuid())
+  companyname String?
+  userId String @unique
+  inn String?
+  bik String?
+  ogrn String?
+  categories Category[]
+  brandname String?
+  user      User    @relation(fields: [userId], references: [id])
+}
+model Category{
+  id String @id @default(uuid())
+  name String
+  ownerId String
+  owner Owner @relation(fields: [ownerId], references: [id])
+  cities City[]
+}
+model City{
+  id String @id @default(uuid())
+  cityname String
+  categoryId String
+  category Category @relation(fields: [categoryId], references: [id])
+  points Point[]
+  timetable Timetable[]
+}
+model Timetable{
+  id String @id @default(uuid())
+  point Point @relation(fields: [pointId], references: [id])
+  pointId String @unique
+  date DateTime
+  cityId String
+  city City @relation(fields: [cityId], references: [id])
+  time_start String
+  time_end String
+}
+model Point{
+  id String @id @default(uuid())
+  address String
+  name String
+  cityId String
+  city City @relation(fields: [cityId], references: [id])
+  shifts Shift[]
+  clients Client[]
+  realizations Realization[]
+  delivers Deliver[]
+  Timetable Timetable[]
+}
+model Shift{
+  id String @id @default(uuid())
+  pointId String
+  point Point @relation(fields: [pointId], references: [id])
+  date_start DateTime
+  date_end DateTime
+  manager Manager @relation(fields: [managerId], references: [id])
+  managerId String
+
+  Realization Realization[]
+}
+model Client{
+  id String @id @default(uuid())
+  name String
   phonenum String
-  company  String
-  inn      String?
-  bik      String?
-  ogrn     String?
-  client   Client[]
-  manager  Manager[]
-  order    Order[]
-  product  Product[]
-  shift    Shift[]
+  birth DateTime
+  pointId String
+  point Point @relation(fields: [pointId], references: [id])
+  realizations Realization[]
+}
+model Deliver{
+  id String @default(uuid()) @id
+  date DateTime
+  products Product[]
+  summ Int
+  pointId String
+  point Point @relation(fields: [pointId], references: [id])
+}
+model Product{
+  id String @id @default(uuid())
+  name String
+  amount Int
+  buy Int
+  sell Int
+  receive Int
+  uniq_num String?
+  deliverId String
+  deliver Deliver @relation(fields: [deliverId], references: [id])
+  Realization Realization[]
+}
+model Realization{
+  id String @id @default(uuid())
+  date DateTime
+  clientId String 
+  client Client @relation(fields: [clientId], references: [id])
+  shiftId String
+  shift Shift @relation(fields: [shiftId], references: [id])
+  products Product[]
+  summ Int
+
+  Point Point[]
+}
+model Manager{
+  id String @id @default(uuid())
+  shift_cost Int
+  personal_percent Int
+  salary Salary @relation(fields: [salaryId], references: [id])
+  salaryId String
+  userId String @unique
+  user User @relation(fields: [userId], references: [id])
+  shifts Shift[]
+}
+model Salary{
+  id String @id @default(uuid())
+  withdrawals Int
+  add_funds Int
+  balance Int
+  date DateTime
+
+  Manager Manager[]
 }
 
-model Manager {
-  id        String  @id @default(uuid())
-  name      String
-  phonenum  String
-  hour_cost Int
-  user_id   String
-  user      User    @relation(fields: [user_id], references: [id])
-  order     Order[]
-  shift     Shift[]
-}
-
-model Client {
-  id       String  @id @default(uuid())
-  fullname String
-  phonenum String
-  bonuses  Int?
-  user_id  String
-  user     User    @relation(fields: [user_id], references: [id])
-  order    Order[]
-}
-
-model Product {
-  id       String   @id @default(uuid())
-  name     String
-  buy      Int
-  sell     Int
-  buy_date DateTime
-  user_id  String
-  user     User     @relation(fields: [user_id], references: [id])
-  order    Order[]  @relation("OrderToProduct")
-}
-
-model Order {
-  id         String    @id @default(uuid())
-  manager_id String
-  sum        Int
-  client_id  String
-  date       DateTime  @default(now())
-  shift_id   String
-  user_id    String
-  client     Client    @relation(fields: [client_id], references: [id])
-  manager    Manager   @relation(fields: [manager_id], references: [id])
-  shift      Shift     @relation(fields: [shift_id], references: [id])
-  user       User      @relation(fields: [user_id], references: [id])
-  products   Product[] @relation("OrderToProduct")
-}
-
-model Shift {
-  id         String    @id @default(uuid())
-  date_start DateTime  @default(now())
-  date_end   DateTime?
-  manager_id String
-  user_id    String
-  order      Order[]
-  manager    Manager   @relation(fields: [manager_id], references: [id])
-  user       User      @relation(fields: [user_id], references: [id])
-}
