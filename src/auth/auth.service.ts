@@ -41,4 +41,12 @@ export class AuthService {
         refreshToken: this.jwtService.sign({id: user.id, email: user.email}, {expiresIn: '1d'})
       };
     }
+    async refresh(refreshToken: string){
+      const jwtValidate = this.jwtService.verify(refreshToken, {secret:process.env.JWT_SECRET})
+      return {
+        refreshToken: this.jwtService.sign({id: jwtValidate.id, email: jwtValidate.email}, {expiresIn: '1d'}),
+        token: this.jwtService.sign({id: jwtValidate.id, email: jwtValidate.email}, {expiresIn: '3h'}),
+        userId: jwtValidate.id
+      }
+    }
 }

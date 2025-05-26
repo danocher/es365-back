@@ -16,5 +16,8 @@ export class AuthController {
     async emailLogin(@Body() body: UserEmailLoginDto){
     return this.authService.login(body)
   }
-
+  @Post('refresh')
+  async changeTokens(@Body() data: {refreshToken:string}){
+    return this.authService.refresh(data.refreshToken)
+  }
 }
