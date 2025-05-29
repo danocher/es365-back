@@ -21,6 +21,7 @@ model Owner{
   id String @id @default(uuid())
   companyname String?
   userId String @unique
+  managers Manager[]
   inn String?
   bik String?
   ogrn String?
@@ -46,7 +47,9 @@ model City{
 model Timetable{
   id String @id @default(uuid())
   point Point @relation(fields: [pointId], references: [id])
-  pointId String @unique
+  pointId String 
+  managerId String
+  manager Manager @relation(fields: [managerId], references: [id])
   date DateTime
   cityId String
   city City @relation(fields: [cityId], references: [id])
@@ -59,6 +62,7 @@ model Point{
   name String
   cityId String
   city City @relation(fields: [cityId], references: [id])
+  managers Manager[]
   shifts Shift[]
   clients Client[]
   realizations Realization[]
@@ -73,14 +77,13 @@ model Shift{
   date_end DateTime
   manager Manager @relation(fields: [managerId], references: [id])
   managerId String
-
-  Realization Realization[]
+  realization Realization[]
 }
 model Client{
   id String @id @default(uuid())
   name String
   phonenum String
-  birth DateTime
+  birth DateTime?
   pointId String
   point Point @relation(fields: [pointId], references: [id])
   realizations Realization[]
@@ -120,20 +123,24 @@ model Realization{
 model Manager{
   id String @id @default(uuid())
   shift_cost Int
+  ownerId String
+  pointId String
+  point Point @relation(fields: [pointId], references: [id])
+  owner Owner @relation(fields: [ownerId], references: [id])
   personal_percent Int
-  salary Salary @relation(fields: [salaryId], references: [id])
-  salaryId String
+  salary Salary[]
+  timetable Timetable[]
   userId String @unique
   user User @relation(fields: [userId], references: [id])
   shifts Shift[]
 }
 model Salary{
   id String @id @default(uuid())
-  withdrawals Int
-  add_funds Int
+  withdrawals Int?
+  add_funds Int?
   balance Int
   date DateTime
-
-  Manager Manager[]
+  managerId String
+  manager Manager @relation(fields: [managerId], references: [id])
 }
 

@@ -1,4 +1,4 @@
-export interface Iuser{
-    id: string,
-    email: string
+export interface ServersParams{
+    userId: string,
+    ownerId: string
 }
