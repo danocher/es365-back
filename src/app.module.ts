@@ -14,6 +14,7 @@ import { RealizationModule } from './realization/realization.module';
 import { SalaryModule } from './salary/salary.module';
 import { DeliverModule } from './deliver/deliver.module';
 import { ProductsModule } from './products/products.module';
+import { StatisticModule } from './statistic/statistic.module';
 import * as cookieParser from 'cookie-parser'
 @Module({
   imports: [AuthModule, CateroryModule, CityModule, PointModule, ManagerModule, MailerModule.forRoot({
@@ -26,7 +27,7 @@ import * as cookieParser from 'cookie-parser'
         pass: process.env.EMAIL_PASSWORD,
       },
     },
-  }), ClientModule, TimetableModule, ShiftModule, RealizationModule, SalaryModule, DeliverModule, ProductsModule,],
+  }), ClientModule, TimetableModule, ShiftModule, RealizationModule, SalaryModule, DeliverModule, ProductsModule, StatisticModule,],
   controllers: [AppController],
   providers: [AppService],
 })

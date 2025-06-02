@@ -56,4 +56,29 @@ export class SalaryService {
         })
         return salary
     }
+    async getSalaryBalance(managerId:string){
+        const balance = await this.prisma.salary.findFirst({
+            where:{
+                managerId: managerId,
+            },
+            select:{
+                balance:true
+            }
+        })
+        return balance
+    }
+    async getSalaryHistory(managerId:string){
+        const history = await this.prisma.salary.findMany({
+            where:{
+                managerId: managerId,
+            },
+            select:{
+                date:true,
+                balance:true,
+                add_funds:true,
+                withdrawals:true,
+            }
+        })
+        return history
+    }
 }

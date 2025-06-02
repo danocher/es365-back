@@ -33,7 +33,7 @@ export class PointService {
                 clients:true,
                 realizations:true,
                 delivers:true,
-                Timetable:true
+                timetable:true
             }
         })
         if(!point){

@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { DeliverService } from './deliver.service';
-import { DeliverController } from './deliver.controller';
+import { StatisticService } from './statistic.service';
+import { StatisticController } from './statistic.controller';
 import { PrismaService } from 'src/prisma.service';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  controllers: [DeliverController],
-  providers: [DeliverService, PrismaService],
+  controllers: [StatisticController],
+  providers: [StatisticService, PrismaService],
   imports: [JwtModule.register( //UserModule,
      {secret: process.env.JWT_SECRET, signOptions: {expiresIn: '3h'}
     })]
 })
-export class DeliverModule {}
+export class StatisticModule {}

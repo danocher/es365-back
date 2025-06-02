@@ -68,14 +68,14 @@ export class ShiftService {
                 manager:true,
                 realization:{
                     include:{
-                        products:true
+                        items:true
                     }
                 }
             }
         })
         const summ = shift.realization.reduce((acc, realization) => {
-            return acc + realization.products.reduce((acc, product) => {
-                return acc + product.sell
+            return acc + realization.items.reduce((acc, item) => {
+                return acc + item.sell
             }, 0)
         }, 0)
         const calcTime = shift.date_end.getTime() - shift.date_start.getTime()

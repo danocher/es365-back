@@ -67,7 +67,8 @@ model Point{
   clients Client[]
   realizations Realization[]
   delivers Deliver[]
-  Timetable Timetable[]
+  timetable Timetable[]
+  products Product[]
 }
 model Shift{
   id String @id @default(uuid())
@@ -88,26 +89,29 @@ model Client{
   point Point @relation(fields: [pointId], references: [id])
   realizations Realization[]
 }
+model Product{
+  id String @id @default(uuid())
+  delivers Deliver[]
+  name String
+  uniq_num String?
+  pointId String
+  point Point @relation(fields: [pointId], references: [id])
+  realizations RealizationItem[]
+}
 model Deliver{
-  id String @default(uuid()) @id
+  id String @id @default(uuid())
   date DateTime
-  products Product[]
+  productId String
+  product Product @relation(fields: [productId], references: [id])
   summ Int
   pointId String
   point Point @relation(fields: [pointId], references: [id])
-}
-model Product{
-  id String @id @default(uuid())
-  name String
-  amount Int
   buy Int
   sell Int
   receive Int
-  uniq_num String?
-  deliverId String
-  deliver Deliver @relation(fields: [deliverId], references: [id])
-  Realization Realization[]
+  amount Int
 }
+
 model Realization{
   id String @id @default(uuid())
   date DateTime
@@ -115,10 +119,21 @@ model Realization{
   client Client @relation(fields: [clientId], references: [id])
   shiftId String
   shift Shift @relation(fields: [shiftId], references: [id])
-  products Product[]
+  items RealizationItem[]
   summ Int
-
-  Point Point[]
+  pointId String
+  point Point @relation(fields: [pointId], references: [id])
+}
+model RealizationItem{
+  id String @id @default(uuid())
+  productId String
+  product Product @relation(fields: [productId], references: [id])
+  buy Int
+  sell Int
+  amount Int
+  summ Int
+  realizationId String
+  realization Realization @relation(fields: [realizationId], references: [id])
 }
 model Manager{
   id String @id @default(uuid())
