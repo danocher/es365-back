@@ -30,7 +30,20 @@ export class AuthService {
       }
     }
     async login(data:UserEmailLoginDto){
-      const user = await this.prisma.user.findUnique({where: {email:data.email}})
+      const user = await this.prisma.user.findUnique({
+        where: {
+          email:data.email
+        },
+        select:{
+          id:true,
+          name:true,
+          password:true,
+          email:true,
+          manager:true,
+          director:true
+        }
+      }
+      )
       const passwordCompare = await compare(data.password, user.password)
       if(!passwordCompare){
         throw new UnauthorizedException('Неверный логин или пароль')
