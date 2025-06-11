@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { TimetableService } from './timetable.service';
 import { AuthGuard } from 'src/auth/guards/local-auth.guard';
 import { UseGuards } from '@nestjs/common';
@@ -13,9 +13,9 @@ export class TimetableController {
     return await this.timetableService.createTimetable(data, pointId)
   }
   @UseGuards(AuthGuard)
-  @Get('list/:pointId')
-  async getTimetableByPoint(@Param('pointId') pointId: string){
-    return await this.timetableService.getTimetableByPoint(pointId)
+  @Get('list/:managerId')
+  async getTimetableByPoint(@Param('managerId') managerId: string, @Query('dateStart') dateStart: Date | undefined, @Query('dateEnd') dateEnd: Date|undefined){
+    return await this.timetableService.getTimetableByPoint(managerId, dateStart, dateEnd)
   }
   @UseGuards(AuthGuard)
   @Get('manager/:managerId')

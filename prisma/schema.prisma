@@ -42,7 +42,6 @@ model City{
   categoryId String
   category Category @relation(fields: [categoryId], references: [id])
   points Point[]
-  timetable Timetable[]
 }
 model Timetable{
   id String @id @default(uuid())
@@ -51,8 +50,6 @@ model Timetable{
   managerId String
   manager Manager @relation(fields: [managerId], references: [id])
   date DateTime
-  cityId String
-  city City @relation(fields: [cityId], references: [id])
   time_start String
   time_end String
 }

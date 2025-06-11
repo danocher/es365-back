@@ -11,19 +11,44 @@ export class TimetableService {
                 date: data.date,
                 time_start: data.time_start,
                 time_end: data.time_end,
-                cityId: data.cityId,
                 pointId: pointId,
                 managerId: data.managerId
             }
         })
         return timetable
     }
-    async getTimetableByPoint(pointId: string){
-        const timetable = await this.prisma.timetable.findMany({
+    async getTimetableByPoint(managerId: string, dateStart:Date | string, dateEnd:Date|string){
+        console.log(dateStart, typeof dateStart)
+        const point = await this.prisma.manager.findUnique({
             where:{
-                pointId: pointId
+                id:managerId,
+            },
+            select:{
+                pointId:true
             }
         })
+        const timetable = await this.prisma.timetable.findMany({
+            where:{
+                date:{
+                        ...(dateStart!='undefined' && { gt: dateStart }), // Добавляется только если startDate есть
+                        ...(dateEnd!='undefined' && { lt: dateEnd }),     // Добавляется только если endDate есть
+                },
+                pointId:point.pointId
+            },
+            include:{
+                manager:{
+                    select:{
+                        user:{
+                            select:{
+                                name:true
+                            }
+                        }
+                        
+                    }
+                }
+            }
+        })
+        console.log(timetable)
         return timetable
     }
     async getTimetableByManagerId(managerId: string){
