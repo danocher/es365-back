@@ -1,9 +1,8 @@
 export interface CreateShiftDto {
-    date_start: Date
-    date_end: Date
+    date: Date
+    time_start: string
     pointId: string
 }
 export interface CloseShiftDto {
-    shiftId: string
-    date_end: Date
+    time_end: string
 }

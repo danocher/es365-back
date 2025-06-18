@@ -9,7 +9,7 @@ export class DeliverController {
   constructor(private readonly deliverService: DeliverService) {}
   @UseGuards(AuthGuard)
   @Post('create')
-  createDeliver(@Body() data: CreateDeliverDto[]) {
+  createDeliver(@Body() data: CreateDeliverDto) {
     return this.deliverService.createDeliver(data);
   }
 

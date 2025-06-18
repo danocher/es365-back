@@ -71,8 +71,9 @@ model Shift{
   id String @id @default(uuid())
   pointId String
   point Point @relation(fields: [pointId], references: [id])
-  date_start DateTime
-  date_end DateTime
+  date DateTime 
+  time_start String
+  time_end String?
   manager Manager @relation(fields: [managerId], references: [id])
   managerId String
   realization Realization[]
@@ -92,6 +93,7 @@ model Product{
   name String
   uniq_num String?
   pointId String
+  amount Int
   point Point @relation(fields: [pointId], references: [id])
   realizations RealizationItem[]
 }

@@ -25,4 +25,14 @@ export class ProductsController {
   getProductById(@Param('productId') productId: string) {
     return this.productsService.getProductById(productId);
   }
+  @UseGuards(AuthGuard)
+  @Get('id/:productId')
+  getById(@Param('productId') productId: string){
+    return this.productsService.getOneProductByProductId(productId)
+  }
+  @UseGuards(AuthGuard)
+  @Get('delivers/:pointId')
+  getByPointId(@Param('pointId') pointId:string){
+    return this.productsService.getProductsForCreating(pointId)
+  }
 }

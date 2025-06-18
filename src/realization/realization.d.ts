@@ -2,6 +2,12 @@ export interface CreateRealizationDto {
     date: Date
     clientId: string
     shiftId: string
-    summ: number
     pointId: string
+    items:{
+        productId: string
+        buy: number
+        sell: number
+        amount: number
+        summ: number
+    }[]
 }

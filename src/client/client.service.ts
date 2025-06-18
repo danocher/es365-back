@@ -20,6 +20,18 @@ export class ClientService {
         const clients = await this.prisma.client.findMany({
             where:{
                 pointId: pointId
+            },
+            select: {
+                id: true,
+                name: true,
+                birth:true,
+                pointId:true,
+                phonenum:true,
+                _count: {
+                select: {
+                    realizations: true
+                }
+                }
             }
         })
         return clients

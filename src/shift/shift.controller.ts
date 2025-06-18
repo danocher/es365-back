@@ -23,6 +23,11 @@ export class ShiftController {
     return await this.shiftService.getShiftById(shiftId)
   }
   @UseGuards(AuthGuard)
+  @Get('not-closed/:managerId')
+  async getShiftsNotClosed(@Param('managerId') manId:string, @Body('date') date:Date){
+    return await this.shiftService.getShiftNotClosed(manId, date)
+  }
+  @UseGuards(AuthGuard)
   @Post('close/:shiftId')
   async closeShift(@Param('shiftId') shiftId: string, @Body() data: CloseShiftDto){
     return await this.shiftService.closeShift(shiftId, data)

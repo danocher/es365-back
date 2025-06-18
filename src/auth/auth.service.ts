@@ -30,6 +30,25 @@ export class AuthService {
       }
     }
     async login(data:UserEmailLoginDto){
+      console.log(data)
+      try {
+        const user = await this.prisma.user.findUnique({
+        where: {
+          email:data.email
+        },
+        select:{
+          id:true,
+          name:true,
+          password:true,
+          email:true,
+          manager:true,
+          director:true
+        }
+      }
+      )
+      } catch (error) {
+        console.error(error)
+      }
       const user = await this.prisma.user.findUnique({
         where: {
           email:data.email
@@ -56,10 +75,24 @@ export class AuthService {
     }
     async refresh(refreshToken: string){
       const jwtValidate = this.jwtService.verify(refreshToken, {secret:process.env.JWT_SECRET})
+      const user = await this.prisma.user.findUnique({
+        where: {
+          id:jwtValidate.id
+        },
+        select:{
+          id:true,
+          name:true,
+          password:true,
+          email:true,
+          manager:true,
+          director:true
+        }
+      }
+      )
       return {
         refreshToken: this.jwtService.sign({id: jwtValidate.id, email: jwtValidate.email}, {expiresIn: '1d'}),
         token: this.jwtService.sign({id: jwtValidate.id, email: jwtValidate.email}, {expiresIn: '3h'}),
-        userId: jwtValidate.id
+        user:user
       }
     }
 }

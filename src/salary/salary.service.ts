@@ -15,7 +15,8 @@ export class SalaryService {
                 balance:true
             }
         })
-        if(lastBalance.balance){
+        console.log(lastBalance)
+        if(lastBalance && lastBalance.balance && lastBalance.balance!==null){
             balance = lastBalance.balance
         }
         balance += data.add_funds

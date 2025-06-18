@@ -10,7 +10,8 @@ export class ProductsService {
             data: {
                 name: data.name,
                 uniq_num: data.uniq_num,
-                pointId: data.pointId
+                pointId: data.pointId,
+                amount:0
             }
         })
         return product
@@ -23,10 +24,12 @@ export class ProductsService {
             select:{
                 id:true,
                 name:true,
+                amount:true
             }
         })
     }
     async getProductById(productId: string){
+        console.log(productId)
         return await this.prisma.product.findUnique({
             where:{
                 id: productId
@@ -34,6 +37,31 @@ export class ProductsService {
             include:{
                 delivers:true,
                 realizations:true
+            }
+        })
+    }
+    async getOneProductByProductId(prodId:string){
+        return await this.prisma.product.findUnique({
+            where:{
+                id: prodId
+            },
+            include:{
+                delivers:{
+                    orderBy: {
+                        date: 'asc' // Сортировка по полю date от новых к старым
+                    },
+                },
+                realizations:true
+            }
+        })
+    }
+    async getProductsForCreating(pointId:string){
+        return await this.prisma.product.findMany({
+            where:{
+                pointId
+            },
+            include:{
+                delivers:true
             }
         })
     }

@@ -10,7 +10,7 @@ import { CreateRealizationDto } from './realization.d';
 export class RealizationController {
   constructor(private readonly realizationService: RealizationService) {}
   @UseGuards(AuthGuard)
-  @Post()
+  @Post('create')
   createRealization(@Body() data: CreateRealizationDto, @getServerCustomParams() params: ServersParams){
     return this.realizationService.createRealization(data)
   }
