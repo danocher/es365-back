@@ -1,4 +1,4 @@
-import { Controller, Post, Param } from '@nestjs/common';
+import { Controller, Post, Param, Get } from '@nestjs/common';
 import { StatisticService } from './statistic.service';
 import { AuthGuard } from 'src/auth/guards/local-auth.guard';
 import { UseGuards } from '@nestjs/common';
@@ -30,5 +30,20 @@ export class StatisticController {
   @Post('profit/point/:pointId/:dateStart/:dateEnd')
   async getProfitByPointIdAndDate(@Param('pointId') pointId: string, @Param('dateStart') dateStart: Date, @Param('dateEnd') dateEnd: Date){
     return await this.statisticService.getSummProfitByPointIdAndDates(pointId, dateStart, dateEnd)
+  }
+  @UseGuards(AuthGuard)
+  @Get('daily-finance/:pointId')
+  async getDailyFinancials(@Param('pointId') pointId: string){
+    return await this.statisticService.getTodayFinancials(pointId)
+  }
+  @UseGuards(AuthGuard)
+  @Get('year/revenue/:pointId')
+  async getYearRevenue(@Param('pointId') pointId: string){
+    return await this.statisticService.getMonthlyRevenueByPoint(pointId)
+  }
+  @UseGuards(AuthGuard)
+  @Get('year/profit/:pointId')
+  async getYearProfit(@Param('pointId') pointId: string){
+    return await this.statisticService.getMonthlyProfitByPoint(pointId)
   }
 }

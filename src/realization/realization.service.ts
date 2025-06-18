@@ -69,9 +69,39 @@ export class RealizationService {
                 id: realizationId
             },
             include:{
-                shift:true,
-                client:true,
-                point:true
+                shift:{
+                    select:{
+                        id:true,
+                        manager:{
+                            select:{
+                                id:true,
+                                user:{
+                                    select:{
+                                        name:true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                client:{
+                    select:{
+                        id:true,
+                        name:true
+                    }
+                },
+                point:true,
+                items:{
+                    select:{
+                        id:true,
+                        product:true,
+                        amount:true,
+                        sell:true,
+                        buy:true,
+                        summ:true
+                    }
+                    
+                }
             }
         })
     }

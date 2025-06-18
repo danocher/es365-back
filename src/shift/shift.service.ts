@@ -72,6 +72,9 @@ export class ShiftService {
                         }
                     }
                 },
+            },
+            orderBy:{
+                date:'desc'
             }
         })
         return shifts

@@ -64,6 +64,9 @@ export class SalaryService {
             },
             select:{
                 balance:true
+            },
+            orderBy:{
+                date:'desc'
             }
         })
         return balance
@@ -78,6 +81,9 @@ export class SalaryService {
                 balance:true,
                 add_funds:true,
                 withdrawals:true,
+            },
+            orderBy:{
+                date:'desc'
             }
         })
         return history
