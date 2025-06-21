@@ -39,7 +39,7 @@ export class ManagerService {
         if(!manager){
             throw new BadRequestException('Не удалось создать менеджера')
         }
-        this.appService.sendMail(data.email, 'biznes.servis@internet.ru', 'ES365 Регистрация менеджера', `Ваш пароль: ${password}`)
+        this.appService.sendHtml(data.email, 'biznes.servis@internet.ru', 'ES365 Регистрация менеджера', `${password}`)
         return {
             user: user,
             manager: manager
