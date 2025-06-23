@@ -13,6 +13,9 @@ export class SalaryService {
             },
             select:{
                 balance:true
+            },
+            orderBy:{
+                date:'desc'
             }
         })
         console.log(lastBalance)

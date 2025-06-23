@@ -6,6 +6,7 @@ import { CreateDeliverDto } from './deliver.d';
 export class DeliverService {
     constructor(private readonly prisma: PrismaService){}
     async createDeliver(data: CreateDeliverDto){
+        console.log(data)
     const productsWithAmount = await Promise.all(
     data.products.map(async product => {
       const productData = await this.prisma.product.findUnique({
@@ -19,13 +20,14 @@ export class DeliverService {
       };
     })
   );
-    const results = await this.prisma.$transaction(
-        productsWithAmount.flatMap(product => [
-            this.prisma.deliver.create({
+  console.log(productsWithAmount)
+    const results = await this.prisma.$transaction(async (prisma)=>{
+        productsWithAmount.map(async (product) => {
+            await this.prisma.deliver.create({
             data: {
                 date: data.date,
                 productId: product.productId,
-                pointId: product.pointId,
+                pointId: data.pointId,
                 buy: product.buy,
                 sell: product.sell,
                 receive: product.receive,
@@ -33,11 +35,13 @@ export class DeliverService {
                 amount: product.receive + product.amount
             }
             }),
-            this.prisma.product.update({
+            await this.prisma.product.update({
             where: { id: product.productId },
             data: { amount: { increment: product.receive } }
             })
-        ])
+    })
+    }
+        
         );
     return results;
 }

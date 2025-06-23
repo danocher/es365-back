@@ -23,6 +23,14 @@ export class AuthService {
           userId: user.id
         }
       })
+      await this.prisma.payment.create({
+        data:{
+          add_funds:200,
+          balance: 200,
+          ownerId:owner.id,
+          status:'FINISHED'
+        }
+      })
       return{
           user:user,
           token: this.jwtService.sign({id: user.id, email: user.email}, {expiresIn: '3h'}),

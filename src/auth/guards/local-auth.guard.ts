@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ExtendedReq } from 'src/common/utils';
 import { PrismaService } from 'src/prisma.service';
@@ -28,11 +28,23 @@ export class AuthGuard implements CanActivate {
       where: { id: userFromJwt.id },
       select:{
         id:true,
-        director:true,
+        director:{
+          include:{
+            payment:{
+              orderBy:{
+                date:'desc'
+              }
+            }
+          }
+        },
         manager:true,
-      }
+      },
     });
+    
     if(user.director){
+      if(user.director.payment[0].balance<=15){
+        throw new ServiceUnavailableException('Недостаточно средств, пополните баланс чтобы продолжить')
+      }
       request.userId = user.id
       request.ownerId = user.director.id
       return true
@@ -40,6 +52,21 @@ export class AuthGuard implements CanActivate {
     if(user.manager){
       request.userId = user.id  
       request.ownerId = user.manager.ownerId
+      const owner = await this.prisma.owner.findUnique({
+        where:{
+          id: user.manager.ownerId
+        },
+        include:{
+            payment:{
+              orderBy:{
+                date:'desc'
+              }
+            }
+          }
+      })
+      if(owner.payment[0].balance<=15){
+        throw new ServiceUnavailableException('Недостаточно средств, свяжитесь с владельцем для пополнения средств')
+      }
       return true
     }
     if (!user) {

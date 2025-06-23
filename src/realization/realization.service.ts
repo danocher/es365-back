@@ -59,16 +59,30 @@ export class RealizationService {
                 },
                 shiftId:true,
                 summ:true,
-                pointId:true
+                pointId:true,
+                _count:{
+                    select:{
+                        items:true
+                    }
+                }
+            },
+            orderBy:{
+                date:'desc'
             }
         })
     }
     async getRealizationById(realizationId: string){
-        return await this.prisma.realization.findUnique({
+        console.log(realizationId)
+        const res =  await this.prisma.realization.findUnique({
             where:{
                 id: realizationId
             },
             include:{
+                _count:{
+                    select:{
+                        items:true
+                    }
+                },
                 shift:{
                     select:{
                         id:true,
@@ -84,17 +98,23 @@ export class RealizationService {
                         }
                     }
                 },
+                point:true,
                 client:{
                     select:{
                         id:true,
                         name:true
                     }
                 },
-                point:true,
+                // point:true,
                 items:{
                     select:{
                         id:true,
-                        product:true,
+                        product:{
+                            select:{
+                                id:true,
+                                name:true
+                            }
+                        },
                         amount:true,
                         sell:true,
                         buy:true,
@@ -104,5 +124,7 @@ export class RealizationService {
                 }
             }
         })
+        console.log(res)
+        return res
     }
 }

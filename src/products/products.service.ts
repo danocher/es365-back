@@ -24,7 +24,14 @@ export class ProductsService {
             select:{
                 id:true,
                 name:true,
-                amount:true
+                amount:true,
+                uniq_num:true,
+                _count:{
+                    select:{
+                        delivers:true,
+                        realizations:true
+                    }
+                }
             }
         })
     }

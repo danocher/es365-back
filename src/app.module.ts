@@ -16,6 +16,7 @@ import { DeliverModule } from './deliver/deliver.module';
 import { ProductsModule } from './products/products.module';
 import { StatisticModule } from './statistic/statistic.module';
 import { PaymentModule } from './payment/payment.module';
+import { ScheduleModule } from '@nestjs/schedule';
 import * as cookieParser from 'cookie-parser'
 @Module({
   imports: [AuthModule, CateroryModule, CityModule, PointModule, ManagerModule, MailerModule.forRoot({
@@ -28,7 +29,8 @@ import * as cookieParser from 'cookie-parser'
         pass: process.env.EMAIL_PASSWORD,
       },
     },
-  }), ClientModule, TimetableModule, ShiftModule, RealizationModule, SalaryModule, DeliverModule, ProductsModule, StatisticModule, PaymentModule,],
+  }), ClientModule, TimetableModule, ShiftModule, RealizationModule, SalaryModule, DeliverModule, ProductsModule, StatisticModule, PaymentModule,
+ScheduleModule.forRoot()],
   controllers: [AppController],
   providers: [AppService],
 })

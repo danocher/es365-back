@@ -28,6 +28,7 @@ model Owner{
   categories Category[]
   brandname String?
   user      User    @relation(fields: [userId], references: [id])
+  payment Payment[]
 }
 model Category{
   id String @id @default(uuid())
@@ -113,6 +114,7 @@ model Deliver{
 
 model Realization{
   id String @id @default(uuid())
+  order_number Int @default(autoincrement())
   date DateTime
   clientId String 
   client Client @relation(fields: [clientId], references: [id])
@@ -157,4 +159,29 @@ model Salary{
   managerId String
   manager Manager @relation(fields: [managerId], references: [id])
 }
+enum STATUS{
+  CREATED
+  INPROPGRESS
+  FINISHED
+  CANCELLED
+}
+model Payment {
+  id          String       @id @default(uuid())
+  withdrawals Int?
+  add_funds   Int?
+  balance     Int
+  date        DateTime @default(now())
+  ownerId     String
+  owner       Owner        @relation(fields: [ownerId], references: [id])
+  order       PaymentOrder?  // Сделано необязательным
+  status STATUS
+}
 
+model PaymentOrder {
+  id            String    @id @default(uuid())
+  summ          String
+  idempotence   String    @unique()
+  yoo_order_id  String    @unique()
+  payment_id    String    @unique()  // Уникальное поле для связи 1:1
+  payment       Payment   @relation(fields: [payment_id], references: [id])
+}

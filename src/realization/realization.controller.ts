@@ -19,9 +19,17 @@ export class RealizationController {
   getAllRealizations(@Param('pointId') pointId: string){
     return this.realizationService.getAllRealizations(pointId)
   }
-  @UseGuards(AuthGuard)
-  @Get(':realizationId')
-  getRealizationById(@Param('realizationId') realizationId: string){
-    return this.realizationService.getRealizationById(realizationId)
+  // @UseGuards(AuthGuard)
+  // @Get(':realizationId')
+  // async getRealizationById(@Param('realizationId') realizationId: string){
+  //   return await this.realizationService.getRealizationById(realizationId)
+  // }
+  @Get(':realId')
+  async getOrdeById(@Param('realId') realId: string){
+    return await this.realizationService.getRealizationById(realId)
+  }
+  @Get('one/:realId')
+  async getById(@Param('realId') realId: string){
+    return await this.realizationService.getRealizationById(realId)
   }
 }

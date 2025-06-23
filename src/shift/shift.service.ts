@@ -62,6 +62,12 @@ export class ShiftService {
                 managerId: managerId
             },
             include:{
+                _count:{
+                    select:{
+                        realization:true,
+
+                    }
+                },
                 manager:{
                     select:{
                         id:true,
@@ -73,6 +79,7 @@ export class ShiftService {
                     }
                 },
             },
+            
             orderBy:{
                 date:'desc'
             }
@@ -85,6 +92,11 @@ export class ShiftService {
                 id: shiftId
             },
             include:{
+                _count:{
+                    select:{
+                        realization:true
+                    }
+                },
                 manager:{
                     select:{
                         id:true,
@@ -96,7 +108,33 @@ export class ShiftService {
                     }
                 },
                 point:true,
-                realization:true
+                realization:{
+                    select:{
+                        id:true,
+                        date:true,
+                        client:{
+                            select:{
+                                name:true
+                            }
+                        },
+                        summ:true,
+                        items:{
+                            select:{
+                                id:true,
+                                product:{
+                                    select:{
+                                        id:true,
+                                        name:true
+                                    }
+                                },
+                                amount:true,
+                                buy:true,
+                                sell:true,
+                                summ:true
+                            }
+                        }
+                    }
+                }
             }
         })
         return shift
